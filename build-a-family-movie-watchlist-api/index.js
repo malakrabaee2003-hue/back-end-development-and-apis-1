@@ -60,10 +60,10 @@ app.delete('/api/watchlist/:userId/movies/:movieId', authenticate, authorizeModi
   return res.status(200).json(updatedWatchlist);
 });
 
-// تشغيل السيرفر وتصديره بالشكل الصحيح للاختبارات
-const server = app.listen(PORT, () => {
-  console.log(`Family Movie Watchlist API running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Family Movie Watchlist API running on port ${PORT}`);
+  });
+}
 
 export default app;
-export { server };

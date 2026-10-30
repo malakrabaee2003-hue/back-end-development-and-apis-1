@@ -15,6 +15,10 @@ export function writeWatchlists(watchlists) {
   fs.writeFileSync(WATCHLISTS_PATH, JSON.stringify(watchlists, null, 2));
 }
 
+export function getUsers() {
+  return users;
+}
+
 export function findByUsername(username) {
   return users.find((u) => u.username === username) || null;
 }
@@ -29,11 +33,10 @@ export function getWatchlist(userId) {
   }
 
   const watchlists = readWatchlists();
-
   return watchlists[userId] || [];
 }
 
-export function addMovie(userId, movieData) {
+export function addMovieToWatchlist(userId, movieData) {
   if (!findById(userId)) {
     return null;
   }
@@ -53,36 +56,38 @@ export function addMovie(userId, movieData) {
   watchlists[userId] = list;
   writeWatchlists(watchlists);
 
-  return movie;
+  return list;
 }
 
-export function updateMovie(userId, movieId, updates) {
+export function updateMovieInWatchlist(userId, movieId, updates) {
   if (!findById(userId)) {
     return null;
   }
 
   const watchlists = readWatchlists();
   const list = watchlists[userId] || [];
-  const index = list.findIndex((m) => m.id === movieId);
+  const numericMovieId = Number(movieId);
+  const index = list.findIndex((m) => m.id === numericMovieId);
 
   if (index === -1) {
     return null;
   }
 
-  list[index] = { ...list[index], ...updates, id: movieId };
+  list[index] = { ...list[index], ...updates, id: numericMovieId };
   watchlists[userId] = list;
   writeWatchlists(watchlists);
 
-  return list[index];
+  return list;
 }
 
-export function deleteMovie(userId, movieId) {
+export function removeMovieFromWatchlist(userId, movieId) {
   if (!findById(userId)) {
     return null;
   }
   const watchlists = readWatchlists();
   const list = watchlists[userId] || [];
-  const index = list.findIndex((m) => m.id === movieId);
+  const numericMovieId = Number(movieId);
+  const index = list.findIndex((m) => m.id === numericMovieId);
 
   if (index === -1) {
     return null;
@@ -92,5 +97,5 @@ export function deleteMovie(userId, movieId) {
   watchlists[userId] = list;
   writeWatchlists(watchlists);
 
-  return true;
+  return list;
 }
